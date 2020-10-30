@@ -54,7 +54,7 @@ public class ReimbursementPostgres implements ReimbursementDAO {
 	public Reimbursement getReimbursementById(Integer id) {
 		Reimbursement r = null;
 		try(Connection conn = cu.getConnection()){
-			String sql = "select reimb_id, reimb_amount, reimb_submitted, reimb_resolved, reimb_description,reimb_receipt, reimb_author, reimb_resolver, ers_reimbursement_status.reimb_status , ers_reimbursement_type.reimb_type from ers_reimbursement\r\n " + 
+			String sql = "select reimb_id, reimb_amount, reimb_submitted, reimb_resolved, reimb_description,reimb_receipt, reimb_author, reimb_resolver, ers_reimbursement_status.reimb_status , ers_reimbursement.reimb_type_id ,ers_reimbursement_type.reimb_type from ers_reimbursement\r\n " + 
 					"join ers_reimbursement_status on ers_reimbursement.reimb_status_id = ers_reimbursement_status.reimb_status_id \r\n" + 
 					"join ers_reimbursement_type on ers_reimbursement.reimb_type_id = ers_reimbursement_type.reimb_type_id where reimb_id = ?";
 			
@@ -78,10 +78,11 @@ public class ReimbursementPostgres implements ReimbursementDAO {
 				user2.setUserId(rs.getInt(8));
 				r.setResolverUser(user2);
 				ReimbursementType t = new ReimbursementType();
-				t.setType(rs.getString(9));
+				t.setTypeId(rs.getInt(9));
+				t.setType(rs.getString(10));
 				r.setType(t);
 				ReimbursementStatus s = new ReimbursementStatus();
-				s.setStatus(rs.getString(10));
+				s.setStatus(rs.getString(11));
 				r.setStatus(s);
 				
 			}
@@ -272,8 +273,8 @@ public class ReimbursementPostgres implements ReimbursementDAO {
 		try(Connection conn = cu.getConnection()){
 			conn.setAutoCommit(false);
 			
-			String sql = "update ers_reimbursement set reimb_amount = ?, reimb_submitted = ?, reimb_resolver = ?, reimb_description = ?, "
-					+ "reimb_receipt = ?, reimb_author = ?, reimb_resover = ?, reimb_status_id = ?, reimb_type_id = ? where reimb_id = ? ";
+			String sql = "update ers_reimbursement set reimb_amount = ?, reimb_submitted = ?, reimb_resolved = ?, reimb_description = ?, "
+					+ "reimb_receipt = ?, reimb_author = ?, reimb_resolver = ?, reimb_status_id = ?, reimb_type_id = ? where reimb_id = ? ";
 			
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setDouble(1, r.getReimbAmount());

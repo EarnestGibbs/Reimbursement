@@ -15,8 +15,8 @@ function getReimbursement(reimbursements){
         const type = document.createElement("td");
         id.innerHTML = reimbursement.reimbID;
         ammount.innerHTML = reimbursement.reimbAmount;
-        submitDate.innerHTML = reimbursement.reimbSubmitted;
-        resolveDate.innerHTML = reimbursement.reimbResolved;
+        submitDate.innerHTML = new Date(reimbursement.reimbSubmitted);
+        resolveDate.innerHTML = new Date(reimbursement.reimbResolved);
         description.innerHTML = reimbursement.reimbDescription;
         receipt.innerHTML = reimbursement.reimbReceipt;
         author.innerHTML = reimbursement.authorUser.userId;
@@ -32,11 +32,13 @@ function getReimbursement(reimbursements){
     	filter_id.setAttribute("value", i);
     	filter_id.innerHTML = reimbursement.reimbID;
     	
-    	document.getElementById("filter").append(filter_id);
+    	document.getElementById("filterId").append(filter_id);
     	
     	i++;
     }
 }
+
+let reimb_value;
 
 async function asyncFetch(url, expression){
     const response = await fetch(url);
@@ -44,19 +46,40 @@ async function asyncFetch(url, expression){
     expression(json);
 };
 
-asyncFetch("http://localhost:8081/ReimbursementSystem/all.json", getReimbursement);
+asyncFetch("http://localhost:8081/ReimbursementSystem/allreimb.json", getReimbursement);
 
-function filter(){
-	const filterNumber = document.getElementById("filter").value;
+
+
+async function updateReimb(){
+	const reimbursement =  {
+	        reimbId:reimb_value,
+	        status: {
+	            statusId:document.getElementById("status").value
+	        }
+	    }
+	const fetched = await fetch("http://localhost:8081/ReimbursementSystem/update.json", {
+			method:"post",
+			body:JSON.stringify(reimbursement)
+	});
+	const json = await fetched.text();
+	const rows = document.getElementById("reimbursementTableBody").innerHTML='';
+	asyncFetch("http://localhost:8081/ReimbursementSystem/allreimb.json", getReimbursement);
+}
+
+document.getElementById("updateReimb").addEventListener('click',updateReimb)
+
+function filterId(){
+	const filterNumber = document.getElementById("filterId").value;
 	const tr = document.getElementById("reimbursementTableBody").getElementsByTagName('tr');
 	for(let i = 0; i < tr.length; i++){
 		let td = document.getElementById([i]);
 		if(td){
-			console.log(filterNumber);
 			const noFilter = document.getElementById("none")
 			if(filterNumber === "none"){
 				tr[i].style.display = "";
 			}else if(td.id===filterNumber){
+				reimb_value= tr[i].firstChild.innerHTML
+				console.log(reimb_value)
 				tr[i].style.display= "";
 			}else{
 				tr[i].style.display= "none";
@@ -64,7 +87,20 @@ function filter(){
 		}
 	}   	
 }
-filter();
-function updateReimb(){
-	
-}
+
+function filterName(){
+    	const filterWord = document.getElementById("filterName").value;
+    	const tr = document.getElementById("reimbursementTableBody").getElementsByTagName('tr');
+    	for(let i = 0; i < tr.length; i++){
+    		if(tr){
+    			const testWord = tr[i].lastElementChild.innerHTML.toLocaleLowerCase()
+    			console.log(testWord)
+    			console.log(filterWord)
+    			if(testWord===filterWord||testWord === ""){
+    				tr[i].style.display= "";
+    			}else{
+    				tr[i].style.display= "none";
+    			}
+    		}
+    	}   	
+    }

@@ -29,17 +29,18 @@ public class RequestForwarder extends HttpServlet {
 	public void data(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		switch(req.getRequestURI()) {
 		case"/ReimbursementSystem/all.json":
-			new ReimbursementDataController().sendAllData(res);
+			new ReimbursementDataController().sendReimbToEmployes(req, res);
 			break;
 		case"/ReimbursementSystem/reimbursement.json":
 			new SaveController().saveReimbursement(req, res);
 			break;
-		case"/ReimbursementSystem/veiw.json":
-			System.out.println(req.getParameter("reimb_id"));
+		case"/ReimbursementSystem/update.json":
 			new ReimbursementDataController().sendReimb(req, res);
 			break;
+		case"/ReimbursementSystem/allreimb.json":
+			new ReimbursementDataController().sendAllData(res);
 		
 		}
 	}
 
-}
+} 	

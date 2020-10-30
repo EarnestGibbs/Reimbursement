@@ -3,7 +3,6 @@ function renderTable(reimbursements){
     for(const reimbursement of reimbursements){
         const tr = document.createElement("tr");
         const id = document.createElement("td");
-        id.addEventListener("click",getReimbursementById);
         const ammount = document.createElement("td");
         const submitDate = document.createElement("td");
         const resolveDate = document.createElement("td");
@@ -15,8 +14,8 @@ function renderTable(reimbursements){
         const type = document.createElement("td");
         id.innerHTML = reimbursement.reimbID;
         ammount.innerHTML = reimbursement.reimbAmount;
-        submitDate.innerHTML = reimbursement.reimbSubmitted;
-        resolveDate.innerHTML = reimbursement.reimbResolved;
+        submitDate.innerHTML = new Date(reimbursement.reimbSubmitted);
+        resolveDate.innerHTML = new Date(reimbursement.reimbResolved);
         description.innerHTML = reimbursement.reimbDescription;
         receipt.innerHTML = reimbursement.reimbReceipt;
         author.innerHTML = reimbursement.authorUser.userId;
@@ -29,6 +28,7 @@ function renderTable(reimbursements){
     }
 }
 
+
     async function asyncFetch(url, expression){
         const response = await fetch(url);
         const json = await response.json();
@@ -36,10 +36,6 @@ function renderTable(reimbursements){
     };
 
     asyncFetch("http://localhost:8081/ReimbursementSystem/all.json", renderTable);
-    
-    function test(){
-    	return console.log("the button is working");
-    };
     
     async function addReimbursement(){
     	const reimbursement =  {
@@ -59,34 +55,13 @@ function renderTable(reimbursements){
     	asyncFetch("http://localhost:8081/ReimbursementSystem/all.json", renderTable);
     }
 
-    document.getElementById("reimbSubmit").addEventListener("click",addReimbursement);
-  
-    
-    function filter(){
-    	const filterWord = document.getElementById("filter").value;
-    	const tr = document.getElementById("reimbursementTableBody").getElementsByTagName('tr');
-    	for(let i = 0; i < tr.length; i++){
-    		let td = document.getElementsByTagName("td")[9];
-    		if(td){
-    			const txtValue = td.textContent;
-    			if(txtValue.toLowerCase().indexOf(filterWord)>-1||txtValue === ""){
-    				tr[i].style.display= "";
-    			}else{
-    				tr[i].style.display= "none";
-    			}
-    		}
-    	}   	
-    }
 
-//    function getReimbursementById(){
-//    	const reimb_id = document.getElementById("reimb_id").value;
-//    }
-    
     function goToEditPage(){
     	asyncFetch("http://localhost:8081/ReimbursementSystem/veiw.html", getReimbursementById);
     }
     
+    document.getElementById("reimbSubmit").addEventListener("click",addReimbursement);
+
     document.getElementById("reimbUpdate").addEventListener("click",goToEditPage);
 
-    //const fetched = await fetch("http://localhost:8081//ReimbursementSystem/all.json")
     

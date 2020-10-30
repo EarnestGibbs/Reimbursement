@@ -24,10 +24,16 @@ public class ReimbursementController {
 		String userName = req.getParameter("name");
 		String passWord = req.getParameter("pass");
 		User u = us.logIn(userName, passWord);
-		if(u != null) {
+		if(u != null && u.getRole().toString().toLowerCase().contains("finance manager") ) {
+			req.getSession().setAttribute("user", u);
+			return "html/view.html";
+		}else if(u.getRole().toString().toLowerCase().contains("employee")) {
 			req.getSession().setAttribute("user", u);
 			return "html/reimbursement.html";
-		} else {
+			
+		}
+		else {
+			System.out.println(u.getRole().toString().toLowerCase());
 			return ".page";
 		}
 	}
@@ -35,4 +41,5 @@ public class ReimbursementController {
 	public String view() {
 		return "html/view.html";
 	} 
+	
 }
