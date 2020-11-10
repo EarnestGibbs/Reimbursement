@@ -23,4 +23,4 @@ To-do list:
 > Back on the login if you login as a finance manager then you can view employees reimbursements and resolve them by selecting thier id
 
 ## License
-this project uses the folling license:[<license>](<link>)
+this project uses the folling license:[<license_name>](<link>)
